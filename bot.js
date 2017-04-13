@@ -128,7 +128,33 @@ bot.on('message', message => {
     } else {
       message.reply('`.roll <numero>`, seu burro!');
     }
+  }
 
+  if (command == "whois"){
+    if(argc > 0){
+		if(message.guild.member(message.mentions.users.first()) != null){
+			console.log(message.mentions.users.first().id);
+			if(message.mentions.users.first().id === '163687401787621376'){ // user ZMiguel
+				message.reply('Ele é um gajo espetacular!!!');
+			}
+			if(message.mentions.users.first().id === '285569324851265537'){ // user jOliveira
+				message.reply('Ouvi dizer que o podes encontrar a perseguir freiras em fermentelos...');
+			}
+			if(message.mentions.users.first().id === '194367861425307649'){ // user Strokes
+				message.reply('nunca ouvi falar essa pessoa...');
+			}
+			if(message.mentions.users.first().id === '147010139503853568'){ // user Tomas
+				message.reply('Um bêbado qualquer a viver no sul do país... acho eu...');
+			}
+			if(message.mentions.users.first().id === '300380716800147467'){ // user aluc
+				message.reply('Dizem que ele é muito violento...');
+			}
+        } else {
+          message.reply('tens de fazer @<pessoa>!!');
+        }
+    } else {
+      message.reply('`.whois @pessoa`, seu burro!');
+    }
   }
 
 });
