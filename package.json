@@ -1,8 +1,8 @@
 {
-  "name": "discord-isec-bot",
+  "name": "familia bot",
   "engines" : { "node" : ">6.5.0"},
   "version": "1.0.0",
-  "description": "bot do isec",
+  "description": "bot da familia",
   "main": "bot.js",
   "dependencies": {
     "discord.js": "^11.0.0",
