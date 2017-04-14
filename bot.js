@@ -159,6 +159,13 @@ bot.on('message', message => {
 
 });
 
+bot.on("channelCreate", (channel) => { //quando novo canal é criado
+	let familia = channel.client.guilds.array()[1];
+	if(channel.type === "text"){
+		familia.defaultChannel.sendMessage(`@everyone, novo canal ${familia.channels.array()[familia.channels.array().length-1]} criado!`);
+	}
+});
+
 bot.on('ready', () => {
   bot.user.setGame('com a tua mãe');
   console.log('Online!!');
