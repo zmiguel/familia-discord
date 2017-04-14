@@ -118,6 +118,7 @@ bot.on('message', message => {
                   `.nick <nome>` **OU** `.nick @alguem <nome>` permite alterar o teu nick ou de outra pessoa \n\
                   `.game <x>` faz o bot mostrar que está a jogar <x> \n\
                   `.roll <numero>` atira um dado de valor X e ve o que sai\n\
+				  `.whois @pessoa` mostra informação sobre determinada pessoa\n\
                   `.help` este comando, seu burro! ');
   }
   //roll dice
@@ -133,7 +134,6 @@ bot.on('message', message => {
   if (command == "whois"){
     if(argc > 0){
 		if(message.guild.member(message.mentions.users.first()) != null){
-			console.log(message.mentions.users.first().id);
 			if(message.mentions.users.first().id === '163687401787621376'){ // user ZMiguel
 				message.reply('Ele é um gajo espetacular!!!');
 			}
