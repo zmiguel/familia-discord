@@ -146,11 +146,7 @@ bot.on('message', message => {
 		  opt += "\n" + numbs[i] + " " + ops[i];
 	  }
 	  message.channel.sendMessage(pergnt + opt);
-	  message.channel.fetchMessages({limit: 1}).then(
-		  for(let i2=0;i2<=i;i2++){
-			 messages[0].react(numbs[i2]);
-		  }
-	  );
+	  message.channel.fetchMessages({limit: 1}).then(for(let i2=0;i2<=i;i2++){messages[0].react(numbs[i2])});
     }
   }
 
