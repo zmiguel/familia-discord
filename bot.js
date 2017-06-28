@@ -137,7 +137,7 @@ bot.on('message', message => {
       message.reply('`.poll <texto>? op1, op2, op3, op4, ..., op10` MAXIMO 10 OPÇÕES, seu burro!');
     } else {
 	  message.delete();
-	  let numbs = {":one:",":two:",":three:",":four:",":five:",":six:",":seven:",":eight:",":nine:",":keycap_ten:"};
+	  let numbs = [":one:",":two:",":three:",":four:",":five:",":six:",":seven:",":eight:",":nine:",":keycap_ten:"];
       let pergnt = message.content.split("?")[0];
 	  let ops = message.content.split("?")[1].split(",");
 	  let opn = ops.length;
