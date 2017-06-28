@@ -1,5 +1,5 @@
 {
-  "name": "familia bot",
+  "name": "familia-discord",
   "engines" : { "node" : ">6.5.0"},
   "version": "1.0.0",
   "description": "bot da familia",
