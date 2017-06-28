@@ -131,25 +131,6 @@ bot.on('message', message => {
     }
   }
 
-  //roll dice
-  if (command == "poll"){
-    if(argc < 1 || argc > 10){
-      message.reply('`.poll <texto>? op1, op2, op3, op4, ..., op10` MAXIMO 10 OPÇÕES, seu burro!');
-    } else {
-	  message.delete();
-	  let numbs = [":one:",":two:",":three:",":four:",":five:",":six:",":seven:",":eight:",":nine:",":keycap_ten:"];
-      let pergnt = message.content.split("?")[0];
-	  let ops = message.content.split("?")[1].split(",");
-	  let opn = ops.length;
-	  let opt = "";
-	  for(let i=0;i<opn;i++){
-		  opt += "\n" + numbs[i] + " " + ops[i];
-	  }
-	  message.channel.sendMessage(pergnt + opt);
-	  message.channel.fetchMessages({limit: 1}).then(for(let i2=0;i2<=i;i2++){messages[0].react(numbs[i2])});
-    }
-  }
-
   if (command == "whois"){
     if(argc > 0){
 		if(message.guild.member(message.mentions.users.first()) != null){
