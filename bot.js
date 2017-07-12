@@ -1,13 +1,27 @@
 const Discord = require('discord.js');
-const fs = require('fs')
+const low = require('lowdb');
+const fileAsync = require('lowdb/lib/storages/file-async');
 const Random = require("random-js");
 const random = new Random(Random.engines.mt19937().autoSeed());
 const bot = new Discord.Client();
 
 const config = require("./config.json");
-const datafile = './data.json';
+const dataf = low('data.json', {
+  storage: fileAsync
+});
+let uarv = dataf.get('users').value();
+let uar = dataf.get('users');
 
 var modRoles = ["Familia"];
+var i = 0;
+
+function tcalc(seconds){
+	var numdays = Math.floor(seconds / 86400);
+	var numhours = Math.floor((seconds % 86400) / 3600);
+	var numminutes = Math.floor(((seconds % 86400) % 3600) / 60);
+	var numseconds = Math.round(((seconds % 86400) % 3600) % 60);
+	return numdays + "d " + numhours + "h " + numminutes + "m " + numseconds + "s";
+}
 
 function getMemberRoles(array) {
     return array.map(function(item) { return item["name"]; });
@@ -29,6 +43,7 @@ bot.on("guildMemberAdd", (member) => { //memsagem quando alguem novo entra no se
 
 bot.on('message', message => {
   if (message.author.bot) return;
+  dataf.get('users').find({uID:message.author.id}).assign({lastMessage:message.content}).write();
   if (!message.content.startsWith(config.prefix)) return;
 
   let command = message.content.split(" ")[0];
@@ -157,6 +172,58 @@ bot.on('message', message => {
     }
   }
 
+  if (command == "info"){
+	  if(argc === 1){
+		if(message.guild.member(message.mentions.users.first()) != null){
+			let msgu = message.mentions.users.first();
+			let nuser = uar.find({uID:msgu.id});
+			let nuserv = uar.find({uID:msgu.id}).value();
+
+			const embed = new Discord.RichEmbed()
+				.setTitle(`Informação sobre ${msgu.username}`)
+				.setDescription("Tempos de estados, ultima mensagem, etc...")
+				.setThumbnail(msgu.avatarURL)
+				.setFooter("Made by ZMiguel", "https://scontent.flis1-1.fna.fbcdn.net/v/t31.0-8/18451397_10207572680909774_2458040368852190353_o.jpg?oh=41e784b6dd3ecbe322e71f7826fac328&oe=5A0087D8")
+				.setColor(0xFF0000)
+				.addField("Time Online", tcalc(nuserv.Ton/1000), true)
+				.addField("Time Idle", tcalc(nuserv.Tafk/1000), true)
+				.addField("Time Offline", tcalc(nuserv.Toff/1000), true)
+				.addField("Time Do Not Disturb", tcalc(nuserv.Tdnd/1000), true)
+				.addField("Ultima mensagem", nuserv.lastMessage)
+			message.channel.send({embed});
+
+		} else {
+			message.reply('tens de fazer @<pessoa>!!');
+		}
+	  } else {
+		  message.reply('`.info @pessoa`, seu burro!');
+	  }
+  }
+});
+
+bot.on('presenceUpdate',(oldMember, newMember) => {
+	let userID = newMember.user.id;
+	let guildID = newMember.guild.id;
+	let timestamp = Date.now();
+	let timeseconds = timestamp / 1000;
+	if(guildID === uarv[0].sID){
+		nuser = uar.find({uID:userID});
+		nuserv = uar.find({uID:userID}).value();
+		console.log(`>> ${newMember.user.username} changed status from ${oldMember.user.presence.status} to ${newMember.user.presence.status}`);
+		let timedif = timestamp - nuserv.lastTimeStamp;
+
+		if(nuserv.lastStatus === "online"){
+			nuser.assign({Ton:nuserv.Ton+timedif}).write();
+		}else if(nuserv.lastStatus === "idle"){
+			nuser.assign({Tafk:nuserv.Tafk+timedif}).write();
+		}else if(nuserv.lastStatus === "dnd"){
+			nuser.assign({Tdnd:nuserv.Tndn+timedif}).write();
+		}else if(nuserv.lastStatus === "offline"){
+			nuser.assign({Toff:nuserv.Toff+timedif}).write();
+		}
+		nuser.assign({lastStatus:newMember.presence.status}).write();
+		nuser.assign({lastTimeStamp:timestamp}).write();
+	}
 });
 
 bot.on("channelCreate", (channel) => { //quando novo canal é criado
