@@ -44,7 +44,8 @@ bot.on("guildMemberAdd", (member) => { //memsagem quando alguem novo entra no se
 bot.on('message', message => {
   if (message.author.bot) return;
   dataf.get('users').find({uID:message.author.id}).assign({lastMessage:message.content}).write();
-  dataf.get('users').find({uID:message.author.id}).assign({lastAcivity:Date.now()}).write();
+  dataf.get('users').find({uID:message.author.id}).assign({lastActivity:Date.now()}).write();
+  dataf.get('users').find({uID:message.author.id}).assign({lastActivityString:Date()}).write();
   if (!message.content.startsWith(config.prefix)) return;
 
   let command = message.content.split(" ")[0];
@@ -205,7 +206,7 @@ bot.on('message', message => {
 				.addField("Time Offline", tcalc(nuserv.Toff/1000), true)
 				.addField("Time Do Not Disturb", tcalc(nuserv.Tdnd/1000), true)
 				.addField("Ultima mensagem", nuserv.lastMessage)
-				.addField("Ultima actividade", Date(nuserv.lastAcivity))
+				.addField("Ultima actividade", `${nuserv.lastActivityString}\n(${tcalc((timestamp-nuserv.lastActivity)/1000)})`)
 			message.channel.send({embed});
 
 		} else {
@@ -239,8 +240,8 @@ bot.on('presenceUpdate',(oldMember, newMember) => {
 		}
 		nuser.assign({lastStatus:newMember.presence.status}).write();
 		nuser.assign({lastTimeStamp:timestamp}).write();
-		nuser.assign({lastAcivity:Date.now()}).write();
-
+		nuser.assign({lastActivity:Date.now()}).write();
+		nuser.assign({lastActivityString:Date()}).write();
 	}
 });
 
@@ -254,6 +255,7 @@ bot.on("channelCreate", (channel) => { //quando novo canal é criado
 bot.on('ready', () => {
   bot.user.setGame('com a tua mãe');
   console.log('Online!!');
+  console.log(Date());
 });
 
 bot.login(config.token);
