@@ -44,6 +44,7 @@ bot.on("guildMemberAdd", (member) => { //memsagem quando alguem novo entra no se
 bot.on('message', message => {
   if (message.author.bot) return;
   dataf.get('users').find({uID:message.author.id}).assign({lastMessage:message.content}).write();
+  dataf.get('users').find({uID:message.author.id}).assign({lastAcivity:Date.now()}).write();
   if (!message.content.startsWith(config.prefix)) return;
 
   let command = message.content.split(" ")[0];
@@ -134,6 +135,7 @@ bot.on('message', message => {
                   `.game <x>` faz o bot mostrar que está a jogar <x> \n\
                   `.roll <numero>` atira um dado de valor X e ve o que sai\n\
 				  `.whois @pessoa` mostra informação sobre determinada pessoa\n\
+				  `.info` @pessoa info sobre a pessoa\n\
                   `.help` este comando, seu burro! ');
   }
   //roll dice
@@ -178,6 +180,19 @@ bot.on('message', message => {
 			let msgu = message.mentions.users.first();
 			let nuser = uar.find({uID:msgu.id});
 			let nuserv = uar.find({uID:msgu.id}).value();
+			let timestamp = Date.now();
+			let timedif = timestamp - nuserv.lastTimeStamp;
+
+			if(nuserv.lastStatus === "online"){
+				nuser.assign({Ton:nuserv.Ton+timedif}).write();
+			}else if(nuserv.lastStatus === "idle"){
+				nuser.assign({Tafk:nuserv.Tafk+timedif}).write();
+			}else if(nuserv.lastStatus === "dnd"){
+				nuser.assign({Tdnd:nuserv.Tndn+timedif}).write();
+			}else if(nuserv.lastStatus === "offline"){
+				nuser.assign({Toff:nuserv.Toff+timedif}).write();
+			}
+			nuser.assign({lastTimeStamp:timestamp}).write();
 
 			const embed = new Discord.RichEmbed()
 				.setTitle(`Informação sobre ${msgu.username}`)
@@ -190,6 +205,7 @@ bot.on('message', message => {
 				.addField("Time Offline", tcalc(nuserv.Toff/1000), true)
 				.addField("Time Do Not Disturb", tcalc(nuserv.Tdnd/1000), true)
 				.addField("Ultima mensagem", nuserv.lastMessage)
+				.addField("Ultima actividade", Date(nuserv.lastAcivity))
 			message.channel.send({embed});
 
 		} else {
@@ -223,6 +239,8 @@ bot.on('presenceUpdate',(oldMember, newMember) => {
 		}
 		nuser.assign({lastStatus:newMember.presence.status}).write();
 		nuser.assign({lastTimeStamp:timestamp}).write();
+		nuser.assign({lastAcivity:Date.now()}).write();
+
 	}
 });
 
